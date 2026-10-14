@@ -31,6 +31,7 @@ export class LoginComponent {
         next: (response) => {
           this.authService.saveToken(response.token);
           alert('Giriş başarılı!');
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.errorMessage = 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
