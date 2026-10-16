@@ -13,6 +13,8 @@ import {
 export class AuthService {
   private readonly API_URL = 'http://localhost:8080/api/v1/auth';
 
+  private readonly TOKEN_KEY = 'jwt_token';
+
   constructor(private http: HttpClient) {}
 
   register(request: RegisterRequest): Observable<AuthenticationResponse> {
@@ -24,6 +26,48 @@ export class AuthService {
   }
 
   saveToken(token: string): void {
-    localStorage.setItem('jwt_token', token);
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+
+    try {
+      const payload = token.split('.')[1];
+
+      let base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      while (base64.length % 4 !== 0) {
+        base64 += '=';
+      }
+
+      const decodedPayload = JSON.parse(window.atob(base64));
+      const expirationTime = decodedPayload.exp * 1000;
+      const currentTime = Date.now();
+
+      console.log('Token Bitiş Saati:', new Date(expirationTime));
+      console.log('Şu Anki Saat:', new Date(currentTime));
+
+      const isExpired = expirationTime < currentTime;
+
+      if (isExpired) {
+        console.warn('Token süresi gerçekten dolmuş!');
+        this.logout();
+      }
+
+      return isExpired;
+    } catch (e) {
+      console.error('Token çözülürken hata oluştu (Muhtemelen atob çöktü):', e);
+      this.logout();
+      return true;
+    }
+  }
+
+  logout() {
+    localStorage.removeItem(this.TOKEN_KEY);
   }
 }
