@@ -2,17 +2,19 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })
 export class RegisterComponent {
   registerForm: FormGroup;
   errorMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -29,13 +31,19 @@ export class RegisterComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
+
       this.authService.register(this.registerForm.value).subscribe({
-        next: (response) => {
-          this.authService.saveToken(response.token);
-          this.router.navigate(['/login']);
+        next: () => {
+          this.isLoading = false;
+          const userEmail = this.registerForm.get('email')?.value;
+          this.router.navigate(['/verify'], { queryParams: { email: userEmail } });
         },
         error: (err) => {
+          this.isLoading = false;
           this.errorMessage = 'Kayıt işlemi başarısız oldu.';
+          console.error('ANGULAR HATASI DETAYI:', err);
         },
       });
     }

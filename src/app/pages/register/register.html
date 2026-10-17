@@ -28,8 +28,8 @@
         <input type="password" formControlName="password" placeholder="En az 6 karakter">
       </div>
 
-      <button type="submit" class="btn-primary" [disabled]="registerForm.invalid">
-        Kayıt Ol
+      <button type="submit" class="btn-primary" [disabled]="registerForm.invalid || isLoading">
+        {{ isLoading ? 'Kayıt Olunuyor...' : 'Kayıt Ol' }}
       </button>
     </form>
 

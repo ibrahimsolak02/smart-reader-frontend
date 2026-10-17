@@ -7,18 +7,26 @@ import {
   RegisterRequest,
 } from '../models/auth.model';
 
+export interface VerifyRequest {
+  email: string;
+  code: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly API_URL = 'http://localhost:8080/api/v1/auth';
-
   private readonly TOKEN_KEY = 'jwt_token';
 
   constructor(private http: HttpClient) {}
 
-  register(request: RegisterRequest): Observable<AuthenticationResponse> {
-    return this.http.post<AuthenticationResponse>(`${this.API_URL}/register`, request);
+  register(request: RegisterRequest): Observable<any> {
+    return this.http.post(`${this.API_URL}/register`, request, { responseType: 'text' });
+  }
+
+  verify(request: VerifyRequest): Observable<any> {
+    return this.http.post(`${this.API_URL}/verify`, request, { responseType: 'text' });
   }
 
   login(request: AuthenticationRequest): Observable<AuthenticationResponse> {
@@ -49,19 +57,14 @@ export class AuthService {
       const expirationTime = decodedPayload.exp * 1000;
       const currentTime = Date.now();
 
-      console.log('Token Bitiş Saati:', new Date(expirationTime));
-      console.log('Şu Anki Saat:', new Date(currentTime));
-
       const isExpired = expirationTime < currentTime;
 
       if (isExpired) {
-        console.warn('Token süresi gerçekten dolmuş!');
         this.logout();
       }
 
       return isExpired;
     } catch (e) {
-      console.error('Token çözülürken hata oluştu (Muhtemelen atob çöktü):', e);
       this.logout();
       return true;
     }
