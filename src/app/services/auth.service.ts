@@ -5,12 +5,8 @@ import {
   AuthenticationRequest,
   AuthenticationResponse,
   RegisterRequest,
+  VerifyRequest,
 } from '../models/auth.model';
-
-export interface VerifyRequest {
-  email: string;
-  code: string;
-}
 
 @Injectable({
   providedIn: 'root',
