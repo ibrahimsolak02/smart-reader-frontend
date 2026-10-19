@@ -69,4 +69,8 @@ export class AuthService {
   logout() {
     localStorage.removeItem(this.TOKEN_KEY);
   }
+
+  resendCode(email: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/resend-code`, { email }, { responseType: 'text' });
+  }
 }
