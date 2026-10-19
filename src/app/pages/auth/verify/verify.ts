@@ -30,6 +30,26 @@ export class Verify implements OnInit {
     }
   }
 
+  resendMessage: string = '';
+  resendDisabled: boolean = false;
+
+  onResend(): void {
+    this.resendDisabled = true;
+    this.resendMessage = '';
+    this.errorMessage = '';
+
+    this.authService.resendCode(this.email).subscribe({
+      next: () => {
+        this.resendMessage = 'Yeni doğrulama kodu gönderildi!';
+        setTimeout(() => (this.resendDisabled = false), 60000);
+      },
+      error: () => {
+        this.errorMessage = 'Kod gönderilemedi, lütfen tekrar deneyin.';
+        this.resendDisabled = false;
+      },
+    });
+  }
+
   onVerify(): void {
     if (this.code.length !== 6) return;
 

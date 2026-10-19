@@ -5,12 +5,8 @@ import {
   AuthenticationRequest,
   AuthenticationResponse,
   RegisterRequest,
+  VerifyRequest,
 } from '../models/auth.model';
-
-export interface VerifyRequest {
-  email: string;
-  code: string;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -72,5 +68,9 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  resendCode(email: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/resend-code`, { email }, { responseType: 'text' });
   }
 }

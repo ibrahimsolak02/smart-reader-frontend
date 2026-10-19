@@ -26,5 +26,20 @@
       class="btn-primary">
       {{ isLoading ? 'Doğrulanıyor...' : 'Doğrula' }}
     </button>
+
+    @if (resendMessage) {
+      <div class="success-message">{{ resendMessage }}</div>
+    }
+
+    <p class="auth-footer">
+      Kod gelmedi mi?
+      <button
+        class="btn-link"
+        (click)="onResend()"
+        [disabled]="resendDisabled">
+        Tekrar Gönder
+      </button>
+    </p>
+
   </div>
 </div>
