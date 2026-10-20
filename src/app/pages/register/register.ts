@@ -33,7 +33,6 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
-
       this.authService.register(this.registerForm.value).subscribe({
         next: () => {
           this.isLoading = false;
@@ -42,8 +41,8 @@ export class RegisterComponent {
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorMessage = 'Kayıt işlemi başarısız oldu.';
-          console.error('ANGULAR HATASI DETAYI:', err);
+          this.errorMessage = this.authService.getErrorMessage(err, 'Kayıt işlemi başarısız oldu.');
+          console.error('Kayıt hatası:', err);
         },
       });
     }

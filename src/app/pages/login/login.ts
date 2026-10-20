@@ -33,7 +33,10 @@ export class LoginComponent {
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          this.errorMessage = 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.';
+          this.errorMessage = this.authService.getErrorMessage(
+            err,
+            'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.',
+          );
         },
       });
     }
