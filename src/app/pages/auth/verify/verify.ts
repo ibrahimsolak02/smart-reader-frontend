@@ -38,14 +38,17 @@ export class Verify implements OnInit {
     this.resendMessage = '';
     this.errorMessage = '';
 
-    this.authService.resendCode(this.email).subscribe({
+    this.authService.resendCode({ email: this.email }).subscribe({
       next: () => {
         this.resendMessage = 'Yeni doğrulama kodu gönderildi!';
         setTimeout(() => (this.resendDisabled = false), 60000);
       },
-      error: () => {
-        this.errorMessage = 'Kod gönderilemedi, lütfen tekrar deneyin.';
+      error: (err) => {
         this.resendDisabled = false;
+        this.errorMessage = this.authService.getErrorMessage(
+          err,
+          'Kod gönderilemedi, lütfen tekrar deneyin.',
+        );
       },
     });
   }
@@ -63,7 +66,10 @@ export class Verify implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err.error || 'Doğrulama sırasında bir hata oluştu.';
+        this.errorMessage = this.authService.getErrorMessage(
+          err,
+          'Doğrulama sırasında bir hata oluştu.',
+        );
       },
     });
   }
