@@ -19,3 +19,13 @@ export interface VerifyRequest {
   code: string;
 }
 
+export interface ResendCodeRequest {
+  email: string;
+}
+
+export interface ErrorResponse {
+  status: number;
+  message: string;
+  timestamp: string;
+}
+

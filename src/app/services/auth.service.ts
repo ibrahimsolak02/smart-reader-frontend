@@ -6,6 +6,7 @@ import {
   AuthenticationResponse,
   RegisterRequest,
   VerifyRequest,
+  ResendCodeRequest,
 } from '../models/auth.model';
 
 @Injectable({
@@ -70,7 +71,27 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
-  resendCode(email: string): Observable<any> {
-    return this.http.post(`${this.API_URL}/resend-code`, { email }, { responseType: 'text' });
+  resendCode(request: ResendCodeRequest): Observable<any> {
+    return this.http.post(`${this.API_URL}/resend-code`, request, { responseType: 'text' });
+  }
+
+  getErrorMessage(err: any, defaultMessage: string = 'Bir hata oluştu.'): string {
+    if (!err?.error) {
+      return err?.message || defaultMessage;
+    }
+    if (typeof err.error === 'object' && err.error.message) {
+      return err.error.message;
+    }
+    if (typeof err.error === 'string') {
+      try {
+        const parsed = JSON.parse(err.error);
+        if (parsed?.message) {
+          return parsed.message;
+        }
+      } catch {
+        return err.error;
+      }
+    }
+    return defaultMessage;
   }
 }
