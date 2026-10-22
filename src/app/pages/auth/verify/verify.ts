@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,7 @@ export class Verify implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -41,7 +42,11 @@ export class Verify implements OnInit {
     this.authService.resendCode({ email: this.email }).subscribe({
       next: () => {
         this.resendMessage = 'Yeni doğrulama kodu gönderildi!';
-        setTimeout(() => (this.resendDisabled = false), 60000);
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.resendDisabled = false;
+          this.cdr.detectChanges();
+        }, 60000);
       },
       error: (err) => {
         this.resendDisabled = false;
@@ -49,6 +54,7 @@ export class Verify implements OnInit {
           err,
           'Kod gönderilemedi, lütfen tekrar deneyin.',
         );
+        this.cdr.detectChanges();
       },
     });
   }
@@ -70,6 +76,7 @@ export class Verify implements OnInit {
           err,
           'Doğrulama sırasında bir hata oluştu.',
         );
+        this.cdr.detectChanges();
       },
     });
   }

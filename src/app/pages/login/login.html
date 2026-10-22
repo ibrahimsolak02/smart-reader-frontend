@@ -17,8 +17,8 @@
         <input type="password" formControlName="password" placeholder="••••••••">
       </div>
 
-      <button type="submit" class="btn-primary" [disabled]="loginForm.invalid">
-        Giriş Yap
+      <button type="submit" class="btn-primary" [disabled]="isLoading">
+        {{ isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap' }}
       </button>
     </form>
 
