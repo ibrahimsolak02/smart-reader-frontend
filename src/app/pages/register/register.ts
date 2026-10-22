@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
@@ -20,6 +20,7 @@ export class RegisterComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     this.registerForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -30,21 +31,32 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      this.isLoading = true;
-      this.errorMessage = '';
-      this.authService.register(this.registerForm.value).subscribe({
-        next: () => {
-          this.isLoading = false;
-          const userEmail = this.registerForm.get('email')?.value;
-          this.router.navigate(['/verify'], { queryParams: { email: userEmail } });
-        },
-        error: (err) => {
-          this.isLoading = false;
-          this.errorMessage = this.authService.getErrorMessage(err, 'Kayıt işlemi başarısız oldu.');
-          console.error('Kayıt hatası:', err);
-        },
-      });
-    }
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.authService.register(this.registerForm.value).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+        const userEmail = this.registerForm.get('email')?.value;
+        this.router.navigate(['/verify'], { queryParams: { email: userEmail } });
+      },
+      error: (err) => {
+        this.isLoading = false;
+
+        let msg = 'Kayıt işlemi başarısız oldu.';
+        if (err?.error) {
+          try {
+            const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
+            msg = body.message || msg;
+          } catch {
+            msg = typeof err.error === 'string' ? err.error : msg;
+          }
+        }
+
+        this.errorMessage = msg;
+        this.cdr.detectChanges();
+      },
+    });
   }
 }
