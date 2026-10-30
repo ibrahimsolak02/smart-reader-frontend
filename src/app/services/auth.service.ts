@@ -7,6 +7,8 @@ import {
   RegisterRequest,
   VerifyRequest,
   ResendCodeRequest,
+  ForgotPasswordRequest,
+  ResetPasswordRequest,
 } from '../models/auth.model';
 
 @Injectable({
@@ -73,6 +75,14 @@ export class AuthService {
 
   resendCode(request: ResendCodeRequest): Observable<any> {
     return this.http.post(`${this.API_URL}/resend-code`, request, { responseType: 'text' });
+  }
+
+  forgotPassword(request: ForgotPasswordRequest): Observable<any> {
+    return this.http.post(`${this.API_URL}/forgot-password`, request);
+  }
+
+  resetPassword(request: ResetPasswordRequest): Observable<any> {
+    return this.http.post(`${this.API_URL}/reset-password`, request);
   }
 
   getErrorMessage(err: any, defaultMessage: string = 'Bir hata oluştu.'): string {
