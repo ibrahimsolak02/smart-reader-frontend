@@ -1,0 +1,203 @@
+<div class="page-wrapper">
+  <header class="glass-navbar">
+    <div class="navbar-brand" routerLink="/dashboard">
+      <div class="logo-icon">
+        <i class="bi bi-book-half"></i>
+      </div>
+      <div class="brand-info">
+        <span class="brand-title">SmartReader</span>
+        <span class="brand-subtitle">Profil & Ayarlar</span>
+      </div>
+    </div>
+
+    <nav class="navbar-links">
+      <a routerLink="/dashboard" class="nav-link">
+        <i class="bi bi-house"></i> Ana Sayfa
+      </a>
+      <a routerLink="/profile" class="nav-link active">
+        <i class="bi bi-person"></i> Profilim
+      </a>
+    </nav>
+
+    <div class="navbar-actions">
+      @if (user) {
+        <div class="user-pill">
+          <div class="avatar-circle">
+            {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+          </div>
+          <span class="user-name">{{ user.firstName }} {{ user.lastName }}</span>
+        </div>
+      }
+
+      <button class="btn-logout" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i> Çıkış
+      </button>
+    </div>
+  </header>
+
+  <main class="page-content">
+    @if (isLoading) {
+      <div class="loading-state">
+        <i class="bi bi-arrow-repeat spin"></i>
+        <span>Profil bilgileri yükleniyor...</span>
+      </div>
+    } @else if (loadErrorMsg) {
+      <div class="alert-error">
+        <i class="bi bi-exclamation-triangle-fill"></i> {{ loadErrorMsg }}
+      </div>
+    } @else if (user) {
+      <div class="profile-grid">
+        <section class="card-glass profile-overview-card">
+          <div class="overview-header">
+            <div class="large-avatar">
+              {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+            </div>
+            <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+            <p class="user-email">{{ user.email }}</p>
+          </div>
+
+          <div class="overview-details">
+            <div class="detail-item">
+              <span class="detail-label"><i class="bi bi-shield-check"></i> Rol:</span>
+              <span class="detail-value badge-role">{{ user.role }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label"><i class="bi bi-calendar-event"></i> Kayıt Tarihi:</span>
+              <span class="detail-value">{{ user.createdAt | date: 'dd MMMM yyyy, HH:mm' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label"><i class="bi bi-check-circle-fill text-success"></i> Durum:</span>
+              <span class="detail-value status-verified">Doğrulanmış Hesap</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card-glass">
+          <div class="card-title">
+            <i class="bi bi-person-gear"></i>
+            <h4>Profil Bilgilerini Güncelle</h4>
+          </div>
+
+          @if (profileSuccessMsg) {
+            <div class="alert-success">
+              <i class="bi bi-check-circle-fill"></i> {{ profileSuccessMsg }}
+            </div>
+          }
+          @if (profileErrorMsg) {
+            <div class="alert-error">
+              <i class="bi bi-exclamation-circle-fill"></i> {{ profileErrorMsg }}
+            </div>
+          }
+
+          <form (ngSubmit)="onUpdateProfile()">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ad</label>
+                <input type="text" [(ngModel)]="editFirstName" name="firstName" class="input-modern" placeholder="Adınız">
+              </div>
+              <div class="form-group">
+                <label>Soyad</label>
+                <input type="text" [(ngModel)]="editLastName" name="lastName" class="input-modern" placeholder="Soyadınız">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>E-posta Adresi (Değiştirilemez)</label>
+              <input type="email" [value]="user.email" disabled class="input-modern input-disabled">
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <i class="bi bi-floppy"></i> Değişiklikleri Kaydet
+            </button>
+          </form>
+        </section>
+
+        <section class="card-glass">
+          <div class="card-title">
+            <i class="bi bi-key-fill"></i>
+            <h4>Şifre Değiştir</h4>
+          </div>
+
+          @if (passwordSuccessMsg) {
+            <div class="alert-success">
+              <i class="bi bi-check-circle-fill"></i> {{ passwordSuccessMsg }}
+            </div>
+          }
+          @if (passwordErrorMsg) {
+            <div class="alert-error">
+              <i class="bi bi-exclamation-circle-fill"></i> {{ passwordErrorMsg }}
+            </div>
+          }
+
+          <form (ngSubmit)="onChangePassword()">
+            <div class="form-group">
+              <label>Mevcut Şifre</label>
+              <input type="password" [(ngModel)]="currentPassword" name="currentPassword" class="input-modern" placeholder="Mevcut şifreniz">
+            </div>
+
+            <div class="form-group">
+              <label>Yeni Şifre</label>
+              <input type="password" [(ngModel)]="newPassword" name="newPassword" class="input-modern" placeholder="En az 6 karakter">
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <i class="bi bi-shield-lock"></i> Şifreyi Güncelle
+            </button>
+          </form>
+        </section>
+
+        <section class="card-glass danger-card">
+          <div class="card-title text-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <h4>Tehlikeli Bölge</h4>
+          </div>
+          <p class="danger-desc">
+            Hesabınızı sildiğinizde tüm okuma verileriniz ve kayıtlarınız kalıcı olarak kaldırılır. Bu işlem geri alınamaz.
+          </p>
+
+          <button type="button" class="btn-danger" (click)="showDeleteModal = true">
+            <i class="bi bi-trash3-fill"></i> Hesabı Kalıcı Olarak Sil
+          </button>
+        </section>
+      </div>
+    }
+  </main>
+
+  @if (showDeleteModal) {
+    <div class="modal-overlay">
+      <div class="card-glass modal-box">
+        <div class="modal-header">
+          <i class="bi bi-shield-exclamation text-danger"></i>
+          <h3>Hesabınızı Silmek Üzeresiniz</h3>
+        </div>
+        <p class="modal-desc">
+          Güvenliğiniz için lütfen şifrenizi girerek işlemi onaylayın:
+        </p>
+
+        @if (deleteErrorMsg) {
+          <div class="alert-error">
+            <i class="bi bi-exclamation-circle-fill"></i> {{ deleteErrorMsg }}
+          </div>
+        }
+
+        <div class="form-group">
+          <input
+            type="password"
+            [(ngModel)]="deletePassword"
+            class="input-modern"
+            placeholder="Mevcut şifrenizi girin"
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-secondary" (click)="showDeleteModal = false; deletePassword = ''; deleteErrorMsg = ''">
+            Vazgeç
+          </button>
+          <button class="btn-danger" (click)="onDeleteAccount()">
+            Hesabı Kalıcı Olarak Sil
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

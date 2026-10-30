@@ -1,21 +1,35 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <h2>Hesabı Doğrula</h2>
-
-    <p class="instruction-text">
-      <b>{{ email }}</b> adresine gönderilen 6 haneli doğrulama kodunu girin.
-    </p>
-
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
+<div class="auth-page-container">
+  <div class="card-glass">
+    <div class="card-header">
+      <div class="brand-badge">
+        <i class="bi bi-shield-lock-fill"></i> Güvenlik Doğrulaması
+      </div>
+      <h2>Hesabı Doğrula</h2>
+      <p>
+        <strong style="color: var(--text-main);">{{ email }}</strong> adresine gönderilen 6 haneli doğrulama kodunu girin.
+      </p>
     </div>
+
+    @if (errorMessage) {
+      <div class="alert-error">
+        <i class="bi bi-exclamation-circle-fill"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+    }
+
+    @if (resendMessage) {
+      <div class="alert-success">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>{{ resendMessage }}</span>
+      </div>
+    }
 
     <div class="form-group">
       <input
         type="text"
         [(ngModel)]="code"
         maxlength="6"
-        class="otp-input"
+        class="input-modern otp-input"
         placeholder="••••••"
       />
     </div>
@@ -23,23 +37,24 @@
     <button
       (click)="onVerify()"
       [disabled]="code.length !== 6 || isLoading"
-      class="btn-primary">
-      {{ isLoading ? 'Doğrulanıyor...' : 'Doğrula' }}
+      class="btn-primary"
+    >
+      @if (isLoading) {
+        <i class="bi bi-arrow-repeat spin"></i> Doğrulanıyor...
+      } @else {
+        <i class="bi bi-shield-check"></i> Hesabı Doğrula
+      }
     </button>
 
-    @if (resendMessage) {
-      <div class="success-message">{{ resendMessage }}</div>
-    }
-
-    <p class="auth-footer">
-      Kod gelmedi mi?
+    <div class="card-footer">
+      Kod ulaşmadı mı?
       <button
         class="btn-link"
         (click)="onResend()"
-        [disabled]="resendDisabled">
-        Tekrar Gönder
+        [disabled]="resendDisabled"
+      >
+        Tekrar Kod Gönder
       </button>
-    </p>
-
+    </div>
   </div>
 </div>
