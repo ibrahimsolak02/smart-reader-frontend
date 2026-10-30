@@ -1,40 +1,73 @@
-<div class="auth-container">
-  <div class="auth-card">
-    <h2>Kayıt Ol</h2>
+<div class="auth-page-container">
+  <div class="card-glass">
+    <div class="card-header">
+      <div class="brand-badge">
+        <i class="bi bi-person-plus-fill"></i> SmartReader
+      </div>
+      <h2>Hesap Oluştur</h2>
+      <p>Yeni bir okuma deneyimi için aramıza katılın</p>
+    </div>
 
     @if (errorMessage) {
-      <div class="error-message">{{ errorMessage }}</div>
+      <div class="alert-error">
+        <i class="bi bi-exclamation-circle-fill"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
     }
 
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="form-group-row">
+      <div class="form-row">
         <div class="form-group">
           <label>Ad</label>
-          <input type="text" formControlName="firstName" placeholder="Adınız">
+          <input
+            type="text"
+            formControlName="firstName"
+            class="input-modern"
+            placeholder="İbrahim"
+          >
         </div>
         <div class="form-group">
           <label>Soyad</label>
-          <input type="text" formControlName="lastName" placeholder="Soyadınız">
+          <input
+            type="text"
+            formControlName="lastName"
+            class="input-modern"
+            placeholder="Solak"
+          >
         </div>
       </div>
 
       <div class="form-group">
-        <label>E-posta</label>
-        <input type="email" formControlName="email" placeholder="ornek@mail.com">
+        <label>E-posta Adresi</label>
+        <input
+          type="email"
+          formControlName="email"
+          class="input-modern"
+          placeholder="adiniz@example.com"
+        >
       </div>
 
       <div class="form-group">
         <label>Şifre</label>
-        <input type="password" formControlName="password" placeholder="En az 6 karakter">
+        <input
+          type="password"
+          formControlName="password"
+          class="input-modern"
+          placeholder="En az 6 karakter"
+        >
       </div>
 
       <button type="submit" class="btn-primary" [disabled]="isLoading">
-        {{ isLoading ? 'Kayıt Olunuyor...' : 'Kayıt Ol' }}
+        @if (isLoading) {
+          <i class="bi bi-arrow-repeat spin"></i> Kayıt Olunuyor...
+        } @else {
+          <i class="bi bi-check2-circle"></i> Kayıt Ol
+        }
       </button>
     </form>
 
-    <p class="auth-footer">
-      Zaten hesabın var mı? <a routerLink="/login">Giriş Yap</a>
-    </p>
+    <div class="card-footer">
+      Zaten hesabınız var mı? <a routerLink="/login">Giriş Yapın</a>
+    </div>
   </div>
 </div>
