@@ -86,6 +86,23 @@ export class AuthService {
     return this.http.post(`${this.API_URL}/reset-password`, request);
   }
 
+  isRateLimitError(err: any): boolean {
+    return err?.status === 429;
+  }
+
+  isAccountLockedError(err: any): boolean {
+    return err?.status === 423;
+  }
+
+  getRetryAfterSeconds(err: any, defaultSeconds: number = 60): number {
+    const retryHeader = err?.headers?.get('Retry-After');
+    if (retryHeader) {
+      const parsed = parseInt(retryHeader, 10);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    return defaultSeconds;
+  }
+
   getErrorMessage(err: any, defaultMessage: string = 'Bir hata oluştu.'): string {
     if (!err?.error) {
       return err?.message || defaultMessage;
