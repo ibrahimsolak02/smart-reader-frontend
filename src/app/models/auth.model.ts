@@ -11,7 +11,13 @@ export interface AuthenticationRequest {
 }
 
 export interface AuthenticationResponse {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
+  token?: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
 }
 
 export interface VerifyRequest {
