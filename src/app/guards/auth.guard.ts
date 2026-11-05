@@ -10,8 +10,9 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   if (isPlatformBrowser(platformId)) {
     const token = authService.getToken();
+    const refreshToken = authService.getRefreshToken();
 
-    if (token && !authService.isTokenExpired()) {
+    if (token && (!authService.isTokenExpired() || refreshToken)) {
       return true;
     }
   }
